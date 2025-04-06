@@ -4,6 +4,25 @@ import { notFound } from "next/navigation";
 import { getMeal } from "@/lib/meals";
 import classes from "./page.module.css";
 
+// this doesn't work for dynamic pages
+// export const metadata = {
+//   title: "NextLevel Food",
+//   description: "Delicious meals, shared by a food-loving community.",
+// };
+
+export async function generateMetadata({ params }) {
+  const meal = getMeal(params.mealSlug);
+
+  if (!meal) {
+    notFound();
+  }
+
+  return {
+    title: meal.title,
+    description: meal.summary,
+  };
+}
+
 export default function MealDetailsPage({ params }) {
   const meal = getMeal(params.mealSlug);
 
@@ -17,7 +36,11 @@ export default function MealDetailsPage({ params }) {
     <>
       <header className={classes.header}>
         <div className={classes.image}>
-          <Image src={meal.image} alt={meal.title} fill />
+          <Image
+            src={`https://gopallborse-nextjs.s3.amazonaws.com/${meal.image}`}
+            alt={meal.title}
+            fill
+          />
         </div>
         <div className={classes.headerText}>
           <h1>{meal.title}</h1>
